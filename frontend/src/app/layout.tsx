@@ -29,11 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <Providers>
-          <div className="bg-ink text-ivory" role="region" aria-label="Store notice">
-            <p className="container-page py-2 text-center text-[0.8125rem] leading-snug">
-              <span className="font-semibold">Demo store:</span> orders are saved, but no payment is ever taken.
-            </p>
-          </div>
           <Header />
           <main id="main" className="flex-1" tabIndex={-1}>
             {children}
