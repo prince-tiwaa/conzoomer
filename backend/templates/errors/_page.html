@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Conzoomer{% endblock %}</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#F6F2EA;color:#151515;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;box-sizing:border-box}
+main{max-width:520px;width:100%;background:#FFFDF9;border:1px solid #E4DDD0;border-radius:20px;padding:40px 32px}
+.logo{font:700 24px Georgia,serif;letter-spacing:-.5px;color:#151515;text-decoration:none}.logo span{color:#1C3FD1}
+h1{font:600 32px/1.15 Georgia,serif;margin:24px 0 8px}p{color:#4F4A42;margin:0 0 24px}
+a.btn{display:inline-block;background:#1C3FD1;color:#fff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:999px}
+a.btn:focus-visible{outline:3px solid #151515;outline-offset:3px}
+form p{margin:0 0 12px}input,select{font:inherit;padding:10px 12px;border:1px solid #CFC7B8;border-radius:10px;width:100%;box-sizing:border-box}
+button{font:inherit;font-weight:600;background:#1C3FD1;color:#fff;border:0;border-radius:999px;padding:12px 22px;cursor:pointer}
+.errorlist{color:#A11E1E;padding-left:18px}
+</style></head>
+<body><main><a class="logo" href="/">conzoomer<span>.</span></a>{% block page %}{% endblock %}</main></body></html>

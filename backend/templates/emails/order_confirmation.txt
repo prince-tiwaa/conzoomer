@@ -1,0 +1,29 @@
+{% autoescape off %}CONZOOMER
+========
+
+Thanks, {{ first_name }} — your order is in.
+
+Order reference: {{ order.reference }}
+Placed: {{ order.placed_at|date:"j F Y, H:i" }} UTC
+
+IMPORTANT: This is a demo order. No payment was taken and nothing will be charged.
+
+ITEMS
+{% for item in items %}- {{ item.name }} × {{ item.quantity }} — {{ item.line_total }}
+{% endfor %}
+Subtotal:  {{ subtotal }}
+Shipping ({{ order.shipping_method_label }}):  {{ shipping }}
+{{ tax_label }}:  {{ tax }}
+Total:     {{ total }}
+
+SHIPPING TO
+{% for line in address_lines %}{{ line }}
+{% endfor %}
+View your order: {{ link }}
+(Keep this link private — anyone with it can view this order.)
+
+Questions? Reply to this email or write to {{ support_email }}.
+
+Conzoomer · Thoughtful things for everyday life
+{{ frontend_url }}
+{% endautoescape %}
