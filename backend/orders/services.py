@@ -167,7 +167,7 @@ def place_order(request, cart: Cart | None, data: dict, idempotency_key: str):
             for line in totals.lines:
                 Product.objects.filter(pk=line.product.pk).update(stock=F("stock") - line.quantity)
 
-            OrderStatusEvent.objects.create(order=order, status=Order.Status.PLACED, note="Demo order placed — no payment taken.")
+            OrderStatusEvent.objects.create(order=order, status=Order.Status.PLACED, note="Order received.")
 
             # 5. Queue the confirmation email in the same transaction (outbox).
             message = queue_order_confirmation(order, access_token)

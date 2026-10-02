@@ -215,7 +215,6 @@ export default function CartPage() {
             <Link href="/checkout" className="btn btn-primary btn-lg mt-6 w-full">
               Checkout <ArrowRight className="size-4" aria-hidden />
             </Link>
-            <p className="mt-3 text-center text-xs text-ink-muted">Demo checkout — you won&apos;t be charged.</p>
           </div>
         </aside>
       </div>

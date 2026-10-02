@@ -14,9 +14,6 @@ export function Footer() {
           <p className="mt-4 max-w-sm text-ink-soft">
             A small, considered shop for everyday things across tech, home and lifestyle.
           </p>
-          <p className="mt-6 inline-flex rounded-full bg-cobalt-wash px-3 py-1.5 text-sm font-medium text-cobalt-deep">
-            Demo store · checkout never charges a card
-          </p>
         </div>
         <nav aria-label="Shop" className="md:col-span-2">
           <h2 className="font-sans text-sm font-semibold tracking-normal text-ink">Shop</h2>
@@ -49,7 +46,6 @@ export function Footer() {
       <div className="border-t border-line">
         <div className="container-page flex flex-col gap-2 py-6 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Conzoomer. A student project — product photos via Unsplash.</p>
-          <p>Tax shown at checkout uses a demo rate.</p>
         </div>
       </div>
     </footer>

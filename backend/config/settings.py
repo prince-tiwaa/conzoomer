@@ -254,7 +254,7 @@ DEV_LOGIN_ENABLED = DEBUG and env_bool("DEV_LOGIN_ENABLED", False)
 # --- Commerce rules (demo values; NOT production tax advice) --------------------
 CURRENCY_CODE = (env("CURRENCY_CODE", "USD") or "USD").upper()
 DEMO_TAX_RATE = Decimal(env("DEMO_TAX_RATE", "0.08") or "0")
-TAX_LABEL = env("TAX_LABEL", "Estimated sales tax (demo rate)")
+TAX_LABEL = env("TAX_LABEL", "Estimated sales tax")
 FREE_SHIPPING_THRESHOLD = Decimal(env("FREE_SHIPPING_THRESHOLD", "75.00") or "0")
 SHIPPING_METHODS = {
     "standard": {

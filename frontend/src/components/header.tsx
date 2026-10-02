@@ -245,7 +245,6 @@ function HeaderInner() {
               </li>
             </ul>
           </nav>
-          <p className="border-t border-line px-5 py-4 text-sm text-ink-muted">Demo store — orders are never charged.</p>
         </div>
       </div>
     </header>

@@ -67,7 +67,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
             <ul className="mt-8 space-y-3 border-t border-line pt-6 text-sm text-ink-soft">
               <li className="flex gap-3"><Truck className="size-5 shrink-0 text-ink" aria-hidden />Standard and express shipping options, with costs shown before you place your order.</li>
-              <li className="flex gap-3"><ShieldCheck className="size-5 shrink-0 text-ink" aria-hidden />Demo checkout — no card details are collected and nothing is charged.</li>
+              <li className="flex gap-3"><ShieldCheck className="size-5 shrink-0 text-ink" aria-hidden />No account needed — check out as a guest, or sign in with Google to track your orders.</li>
               <li className="flex gap-3"><Mail className="size-5 shrink-0 text-ink" aria-hidden />Questions about an order? Contact us from the link in the footer.</li>
             </ul>
           </div>

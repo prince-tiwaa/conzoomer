@@ -6,8 +6,6 @@ Thanks, {{ first_name }} — your order is in.
 Order reference: {{ order.reference }}
 Placed: {{ order.placed_at|date:"j F Y, H:i" }} UTC
 
-IMPORTANT: This is a demo order. No payment was taken and nothing will be charged.
-
 ITEMS
 {% for item in items %}- {{ item.name }} × {{ item.quantity }} — {{ item.line_total }}
 {% endfor %}

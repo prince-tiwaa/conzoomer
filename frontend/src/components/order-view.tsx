@@ -66,7 +66,7 @@ export function OrderView({ order }: { order: OrderDetail }) {
         <dl className="mt-5 space-y-3 text-[0.9375rem]">
           <div className="flex justify-between"><dt className="text-ink-soft">Subtotal</dt><dd className="tabular-nums">{formatMoney(order.totals.subtotal, c)}</dd></div>
           <div className="flex justify-between"><dt className="text-ink-soft">Shipping · {order.shipping_method_label}</dt><dd className="tabular-nums">{Number(order.totals.shipping_total) === 0 ? "Free" : formatMoney(order.totals.shipping_total, c)}</dd></div>
-          <div className="flex justify-between"><dt className="text-ink-soft">Tax (demo rate {(Number(order.totals.tax_rate) * 100).toFixed(1).replace(/\.0$/, "")}%)</dt><dd className="tabular-nums">{formatMoney(order.totals.tax_total, c)}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-soft">Tax ({(Number(order.totals.tax_rate) * 100).toFixed(1).replace(/\.0$/, "")}%)</dt><dd className="tabular-nums">{formatMoney(order.totals.tax_total, c)}</dd></div>
           <div className="flex justify-between border-t border-line pt-4 text-lg font-semibold"><dt>Total</dt><dd className="tabular-nums">{formatMoney(order.totals.total, c)}</dd></div>
           <div className="flex justify-between text-sm"><dt className="text-ink-muted">Payment</dt><dd className="font-medium text-cobalt-deep">{order.payment_status_label}</dd></div>
         </dl>

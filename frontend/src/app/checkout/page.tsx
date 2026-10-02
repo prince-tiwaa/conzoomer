@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, Loader2, Lock, ShieldCheck } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 
 import { Notice } from "@/components/notice";
 import { ProductImage } from "@/components/product-image";
@@ -437,7 +437,6 @@ export default function CheckoutPage() {
           <Link href="/cart" className="text-sm font-medium text-ink-muted hover:text-ink hover:underline">← Back to cart</Link>
           <h1 className="mt-2 text-4xl font-medium sm:text-5xl">Checkout</h1>
         </div>
-        <p className="inline-flex items-center gap-2 text-sm text-ink-muted"><Lock className="size-4" aria-hidden /> Demo checkout · no payment taken</p>
       </div>
 
       {/* Mobile summary toggle */}
@@ -458,7 +457,7 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <form onSubmit={submit} noValidate className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14" aria-describedby="demo-note">
+      <form onSubmit={submit} noValidate className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14">
         <div className="space-y-10 lg:col-span-7">
           {formError && (
             <div ref={errorRef} tabIndex={-1} className="focus:outline-none">
@@ -524,10 +523,6 @@ export default function CheckoutPage() {
               </div>
             )}
             {errors.billing_address && <p className="field-error">{errors.billing_address}</p>}
-            <div id="demo-note" className="mt-6 flex gap-3 rounded-2xl border border-cobalt/20 bg-cobalt-wash p-4 text-sm text-cobalt-deep">
-              <ShieldCheck className="size-5 shrink-0" aria-hidden />
-              <p><strong>No payment needed.</strong> This is a demonstration store: placing an order saves it and sends a confirmation email, but no card details are collected and nothing is charged.</p>
-            </div>
           </Section>
 
           <div className="border-t border-line pt-8 lg:hidden">{summary}</div>
@@ -537,10 +532,9 @@ export default function CheckoutPage() {
               {submitting ? (
                 <><Loader2 className="size-5 animate-spin" aria-hidden /> Placing your order…</>
               ) : (
-                <>Place demo order{shownTotals ? ` · ${formatMoney(shownTotals.total, currency)}` : ""}</>
+                <>Place order{shownTotals ? ` · ${formatMoney(shownTotals.total, currency)}` : ""}</>
               )}
             </button>
-            <p className="mt-3 text-center text-xs text-ink-muted">By placing this demo order you agree that it is not a real purchase.</p>
           </div>
         </div>
 

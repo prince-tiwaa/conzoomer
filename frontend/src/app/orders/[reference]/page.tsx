@@ -72,10 +72,7 @@ function Confirmation() {
         <p className="mt-4 text-lg text-ink-soft">
           Order reference <strong className="font-mono text-ink">{order.reference}</strong> · placed {formatDate(order.placed_at)}
         </p>
-        <div className="mt-6 rounded-2xl border border-cobalt/20 bg-cobalt-wash p-4 text-sm text-cobalt-deep">
-          <strong>Demo order — not charged.</strong> Your order is saved in our system, but this is a demonstration store: no payment was taken and nothing will ship.
-        </div>
-        <div className="mt-3">
+        <div className="mt-6">
           <EmailStatus order={order} previewHref={previewHref} />
         </div>
       </div>

@@ -54,7 +54,7 @@ class Order(models.Model):
 
     class PaymentStatus(models.TextChoices):
         # Conzoomer runs a demo checkout: no money is ever collected.
-        DEMO_NOT_CHARGED = "demo_not_charged", "Demo — not charged"
+        DEMO_NOT_CHARGED = "demo_not_charged", "Not charged"
         PAID = "paid", "Paid"
         REFUNDED = "refunded", "Refunded"
 

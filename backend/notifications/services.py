@@ -53,7 +53,7 @@ def render_order_confirmation(order, access_token: str):
         "support_email": settings.SUPPORT_EMAIL,
         "first_name": ship.full_name.split(" ")[0],
     }
-    subject = f"Your Conzoomer order {order.reference} (demo — not charged)"
+    subject = f"Your Conzoomer order {order.reference}"
     text = render_to_string("emails/order_confirmation.txt", context)
     html = render_to_string("emails/order_confirmation.html", context)
     return subject, text, html

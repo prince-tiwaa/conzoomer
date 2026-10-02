@@ -45,7 +45,7 @@ class EmailTests(TestCase):
         self.assertEqual(url, "https://api.eu.mailgun.net/v3/mg.example.com/messages")
         data = post.call_args.kwargs["data"]
         self.assertIn(Order.objects.get().reference, data["subject"])
-        self.assertIn("demo", data["text"].lower())
+        self.assertIn("View your order", data["text"])
         self.assertIn("View your order", data["html"])
         self.assertIn("?token=", data["text"])
         self.assertEqual(post.call_args.kwargs["auth"], ("api", "key-test"))
