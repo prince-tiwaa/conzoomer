@@ -32,6 +32,7 @@ api = [
 ]
 
 urlpatterns = [
+    path("", core_views.root),
     path("admin/", admin.site.urls),
     path("api/", include(api)),
     # The storefront owns the sign-in UI; allauth's own pages redirect there.

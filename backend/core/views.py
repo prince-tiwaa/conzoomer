@@ -97,3 +97,8 @@ def health(request):
 
 def redirect_to_signin(request):
     return HttpResponseRedirect("/signin")
+
+
+def root(request):
+    """The API host has no pages of its own; send visitors to the storefront."""
+    return HttpResponseRedirect(settings.FRONTEND_URL + "/")
