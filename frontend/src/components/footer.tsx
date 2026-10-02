@@ -45,7 +45,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line">
         <div className="container-page flex flex-col gap-2 py-6 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} Conzoomer. A student project — product photos via Unsplash.</p>
+          <p>© {year} Conzoomer. All rights reserved.</p>
         </div>
       </div>
     </footer>
