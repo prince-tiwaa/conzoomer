@@ -60,6 +60,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     refresh();
+    // Keep the header's cart count current when returning to the tab (the
+    // cart may have changed in the Conzoomer app).
+    let last = Date.now();
+    const onFocus = () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < 2000) return;
+      last = Date.now();
+      refresh();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
   }, [refresh]);
 
   const setCartCount = useCallback((n: number) => {

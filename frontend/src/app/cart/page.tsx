@@ -39,6 +39,23 @@ export default function CartPage() {
     load();
   }, [load]);
 
+  // The same cart can change from the Conzoomer app; refresh when the shopper
+  // comes back to this tab.
+  useEffect(() => {
+    let last = Date.now();
+    const onFocus = () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < 2000) return;
+      last = Date.now();
+      load();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
+  }, [load]);
+
   const mutate = async (itemId: number, action: () => Promise<Cart>, message: string) => {
     setBusy(itemId);
     setLineError(null);

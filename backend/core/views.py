@@ -25,7 +25,7 @@ def user_payload(user):
         "last_name": user.last_name,
         "name": user.get_full_name() or user.email,
         "picture": picture,
-        "provider": social.provider if social else None,
+        "provider": social.provider if social else ("email" if user.has_usable_password() else None),
         "date_joined": user.date_joined,
     }
 

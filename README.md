@@ -4,9 +4,10 @@ Conzoomer is a small, carefully chosen online shop for everyday Tech, Home and L
 
 - **Backend:** Django 5.2 LTS, Django REST Framework, django-allauth (Google), PostgreSQL (Neon or Supabase), Mailgun HTTP API
 - **Frontend:** Next.js 15 (App Router), TypeScript, Tailwind CSS 4
-- **Payment:** a clearly labelled *demo* checkout. It creates real orders but never collects card details and never charges anyone.
+- **Mobile app:** Expo (React Native) app in [`mobile/`](mobile/README.md). It shares accounts and the cart with the website.
+- **Payment:** checkout creates real orders but never collects card details and never charges anyone.
 
-> Other docs: [Architecture](docs/ARCHITECTURE.md) · [Service setup: Google, Neon, Mailgun](docs/SETUP_SERVICES.md) · [Deployment](docs/DEPLOYMENT.md) · [Requirements checklist](docs/CHECKLIST.md) · [Demo script](docs/DEMO_SCRIPT.md)
+> Other docs: [Mobile app](mobile/README.md) · [Mobile submission & video script](docs/MOBILE_DEMO.md) · [Architecture](docs/ARCHITECTURE.md) · [Service setup: Google, Neon, Mailgun](docs/SETUP_SERVICES.md) · [Deployment](docs/DEPLOYMENT.md) · [Requirements checklist](docs/CHECKLIST.md) · [Demo script](docs/DEMO_SCRIPT.md)
 
 ---
 

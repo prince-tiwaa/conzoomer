@@ -36,7 +36,7 @@ class OrderAccessTests(TestCase):
         anon = csrf_client()
         for url in ["/api/account/", "/api/account/orders/", "/api/account/orders/CZ-AAAAAAAA/"]:
             r = anon.get(url)
-            self.assertEqual(r.status_code, 403, url)
+            self.assertEqual(r.status_code, 401, url)
             self.assertEqual(r.json()["error"]["code"], "not_authenticated")
 
     def test_guest_can_view_own_confirmation_in_same_session(self):

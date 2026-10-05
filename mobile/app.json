@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Conzoomer",
+    "slug": "conzoomer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "conzoomer",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6F2EA",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.conzoomer.shop"
+    },
+    "android": {
+      "package": "com.conzoomer.shop",
+      "adaptiveIcon": {
+        "backgroundColor": "#F6F2EA",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-image",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 240,
+          "backgroundColor": "#F6F2EA"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "apiUrl": "https://conzoomer.onrender.com",
+      "webUrl": "https://conzoomer-shop.onrender.com"
+    }
+  }
+}

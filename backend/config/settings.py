@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -186,7 +187,11 @@ if not DEBUG:
 
 # --- Django REST Framework ---------------------------------------------------
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ["core.auth.CsrfEnforcedSessionAuthentication"],
+    # Mobile app: "Authorization: Token <key>". Website: session cookie + CSRF.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "core.auth.CsrfEnforcedSessionAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
@@ -217,7 +222,7 @@ LOGIN_REDIRECT_URL = "/account"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*"]
-ACCOUNT_EMAIL_VERIFICATION = "none"  # Google has already verified the address
+ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_ADAPTER = "core.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "core.adapters.SocialAccountAdapter"
@@ -225,7 +230,6 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = False  # login must be started with a CSRF-protected POST
 SOCIALACCOUNT_STORE_TOKENS = False  # we never call Google APIs, so don't keep tokens
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = False  # never auto-link to existing accounts by email
-SOCIALACCOUNT_ONLY = True  # no local passwords for shoppers; staff use /admin
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["profile", "email"],
@@ -246,6 +250,13 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 GOOGLE_AUTH_CONFIGURED = bool(env("GOOGLE_OAUTH_CLIENT_ID") and env("GOOGLE_OAUTH_CLIENT_SECRET"))
+
+# Custom URL schemes the mobile app may ask to be sent back to after Google
+# sign-in. "conzoomer://" is the installed app; "exp(s)://" is Expo Go during
+# development. A one-time code + PKCE verifier protects the hand-off.
+MOBILE_REDIRECT_SCHEMES = ("conzoomer", "exp", "exps")
+MOBILE_LOGIN_CODE_TTL_SECONDS = 300
+MIN_PASSWORD_LENGTH = 8
 
 # Local-only shortcut that signs in a fixed demo shopper so order history can be
 # shown before Google credentials exist. Refuses to run unless DEBUG is on.

@@ -19,10 +19,30 @@ class AccountAdapter(DefaultAccountAdapter):
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def on_authentication_error(self, request, provider, error=None, exception=None, extra_context=None):
-        """Send shoppers back to the branded sign-in page instead of allauth's
-        default template when they cancel or Google returns an error."""
+        """Send shoppers back to the branded sign-in page (or to the mobile app,
+        if that's where they started) instead of allauth's default template."""
+        from .accounts import mobile_flow_redirect
+
         reason = "cancelled" if error == AuthError.CANCELLED else "provider"
-        raise ImmediateHttpResponse(HttpResponseRedirect("/signin?" + urlencode({"error": reason})))
+        raise ImmediateHttpResponse(
+            mobile_flow_redirect(request, reason) or HttpResponseRedirect("/signin?" + urlencode({"error": reason}))
+        )
+
+    def pre_social_login(self, request, sociallogin):
+        """A Google sign-in whose email already belongs to an email+password
+        account is not linked automatically (that could hand an account to
+        whoever registered the address first). Ask the shopper to use their
+        password instead."""
+        from .accounts import find_user_by_email, mobile_flow_redirect
+
+        if sociallogin.is_existing:
+            return
+        email = (sociallogin.user.email or "").strip()
+        if email and find_user_by_email(email):
+            raise ImmediateHttpResponse(
+                mobile_flow_redirect(request, "email_exists")
+                or HttpResponseRedirect("/signin?" + urlencode({"error": "email_exists"}))
+            )
 
     def is_open_for_signup(self, request, sociallogin):
         return True

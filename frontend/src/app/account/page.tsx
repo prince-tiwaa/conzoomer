@@ -120,7 +120,7 @@ function Account() {
               </div>
             </div>
             <dl className="mt-6 space-y-2 border-t border-line pt-5 text-sm">
-              <div className="flex justify-between gap-4"><dt className="text-ink-muted">Signed in with</dt><dd className="font-medium">{user.provider === "google" ? "Google" : "Developer sign-in"}</dd></div>
+              <div className="flex justify-between gap-4"><dt className="text-ink-muted">Signed in with</dt><dd className="font-medium">{user.provider === "google" ? "Google" : user.provider === "email" ? "Email & password" : "Developer sign-in"}</dd></div>
               <div className="flex justify-between gap-4"><dt className="text-ink-muted">Member since</dt><dd className="font-medium">{formatDate(user.date_joined)}</dd></div>
             </dl>
             <button type="button" onClick={signOut} disabled={signingOut} className="btn btn-outline mt-6 w-full">

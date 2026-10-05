@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Wordmark } from "@/components/logo";
 import { Notice } from "@/components/notice";
 import { useFeedback, useSession } from "@/components/providers";
-import { api, csrfToken } from "@/lib/api";
+import { api, ApiError, csrfToken } from "@/lib/api";
 
 /** Only same-site relative paths are accepted as post-login destinations. */
 function safeNext(raw: string | null): string {
@@ -19,7 +19,101 @@ function safeNext(raw: string | null): string {
 const ERRORS: Record<string, { title: string; body: string }> = {
   cancelled: { title: "Sign-in was cancelled", body: "No problem — you can try again, or keep shopping as a guest." },
   provider: { title: "Google sign-in didn't complete", body: "Something went wrong talking to Google. Please try again in a moment." },
+  email_exists: {
+    title: "You already have an account with that email",
+    body: "It was created with an email and password. Sign in with your password below.",
+  },
 };
+
+type Mode = "signin" | "register";
+type FieldErrors = Partial<Record<"name" | "email" | "password", string>>;
+
+function EmailForm({ mode, onDone }: { mode: Mode; onDone: () => Promise<void> }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
+  const register = mode === "register";
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pending) return;
+    const errs: FieldErrors = {};
+    if (register && name.trim().length < 2) errs.name = "Enter your name.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) errs.email = "Enter a valid email address.";
+    if (!password) errs.password = register ? "Choose a password." : "Enter your password.";
+    else if (register && password.length < 8) errs.password = "Use at least 8 characters.";
+    setErrors(errs);
+    setFormError(null);
+    if (Object.keys(errs).length) {
+      document.getElementById(`auth-${Object.keys(errs)[0]}`)?.focus();
+      return;
+    }
+    setPending(true);
+    try {
+      await api(register ? "/api/auth/register/" : "/api/auth/login/", {
+        method: "POST",
+        body: register ? { name: name.trim(), email: email.trim(), password } : { email: email.trim(), password },
+      });
+      await onDone();
+    } catch (err) {
+      setPending(false);
+      if (err instanceof ApiError) {
+        const fields = (err.body.fields ?? {}) as FieldErrors;
+        setErrors(fields);
+        setFormError(Object.keys(fields).length ? null : err.message);
+      } else {
+        setFormError("Something went wrong. Please try again.");
+      }
+    }
+  };
+
+  const field = (key: keyof FieldErrors) => ({
+    id: `auth-${key}`,
+    "aria-invalid": !!errors[key],
+    "aria-describedby": errors[key] ? `auth-${key}-error` : undefined,
+    className: "field-input",
+  });
+
+  return (
+    <form onSubmit={submit} noValidate className="space-y-4">
+      {formError && <Notice tone="error" role="alert">{formError}</Notice>}
+      {register && (
+        <div>
+          <label htmlFor="auth-name" className="field-label">Full name</label>
+          <input {...field("name")} name="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+          {errors.name && <p id="auth-name-error" className="field-error">{errors.name}</p>}
+        </div>
+      )}
+      <div>
+        <label htmlFor="auth-email" className="field-label">Email</label>
+        <input {...field("email")} name="email" type="email" inputMode="email" autoComplete={register ? "email" : "username"} value={email} onChange={(e) => setEmail(e.target.value)} />
+        {errors.email && <p id="auth-email-error" className="field-error">{errors.email}</p>}
+      </div>
+      <div>
+        <div className="flex items-baseline justify-between">
+          <label htmlFor="auth-password" className="field-label">Password</label>
+          <button type="button" className="text-xs font-semibold text-cobalt hover:underline" onClick={() => setShowPassword((v) => !v)} aria-controls="auth-password">
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
+        <input {...field("password")} name="password" type={showPassword ? "text" : "password"} autoComplete={register ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} />
+        {errors.password ? (
+          <p id="auth-password-error" className="field-error">{errors.password}</p>
+        ) : register ? (
+          <p className="field-hint">At least 8 characters. Avoid common passwords.</p>
+        ) : null}
+      </div>
+      <button type="submit" className="btn btn-primary btn-lg w-full" disabled={pending}>
+        {pending && <Loader2 className="size-5 animate-spin" aria-hidden />}
+        {pending ? (register ? "Creating your account…" : "Signing in…") : register ? "Create account" : "Sign in"}
+      </button>
+    </form>
+  );
+}
 
 function GoogleIcon() {
   return (
@@ -42,6 +136,7 @@ function SignIn() {
   const [csrf, setCsrf] = useState("");
   const [redirecting, setRedirecting] = useState(false);
   const [devPending, setDevPending] = useState(false);
+  const [mode, setMode] = useState<Mode>(params.get("mode") === "register" ? "register" : "signin");
 
   useEffect(() => {
     document.title = "Sign in · Conzoomer";
@@ -70,14 +165,42 @@ function SignIn() {
       <div className="w-full max-w-md">
         <div className="card p-8 sm:p-10">
           <Wordmark className="text-3xl" />
-          <h1 className="mt-6 text-3xl font-medium">Sign in</h1>
-          <p className="mt-2 text-ink-soft">Keep your cart across devices and see your order history. Your current cart comes with you.</p>
+          <h1 className="mt-6 text-3xl font-medium">{mode === "register" ? "Create your account" : "Sign in"}</h1>
+          <p className="mt-2 text-ink-soft">Keep your cart in sync across the website and the Conzoomer app, and see your order history.</p>
+
+          <div className="mt-6 grid grid-cols-2 rounded-full bg-sand p-1" role="tablist" aria-label="Account">
+            {(["signin", "register"] as Mode[]).map((m) => (
+              <button
+                key={m}
+                type="button"
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => setMode(m)}
+                className={`min-h-10 rounded-full text-sm font-semibold transition-colors ${mode === m ? "bg-paper text-ink shadow-[var(--shadow-soft)]" : "text-ink-muted hover:text-ink"}`}
+              >
+                {m === "signin" ? "Sign in" : "Create account"}
+              </button>
+            ))}
+          </div>
 
           {error && (
             <Notice tone="warn" role="alert" title={error.title} className="mt-6">{error.body}</Notice>
           )}
 
-          <div className="mt-8">
+          <div className="mt-6">
+            <EmailForm
+              key={mode}
+              mode={mode}
+              onDone={async () => {
+                await refresh();
+                toast({ tone: "success", title: mode === "register" ? "Welcome to Conzoomer — your account is ready." : "You're signed in." });
+              }}
+            />
+
+            <div className="my-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-ink-muted" aria-hidden>
+              <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
+            </div>
+
             {loading ? (
               <div className="skeleton h-12 w-full rounded-full" />
             ) : session?.google_enabled ? (
@@ -92,10 +215,7 @@ function SignIn() {
                 </button>
               </form>
             ) : (
-              <Notice tone="info" title="Google sign-in isn't set up yet">
-                Add <code className="font-mono">GOOGLE_OAUTH_CLIENT_ID</code> and <code className="font-mono">GOOGLE_OAUTH_CLIENT_SECRET</code> to the backend
-                <code className="font-mono"> .env</code> and restart Django. See the README for the Google Cloud steps.
-              </Notice>
+              <p className="text-center text-sm text-ink-muted">Google sign-in isn&apos;t configured on this server.</p>
             )}
 
             {session?.dev_login_enabled && (
@@ -113,7 +233,7 @@ function SignIn() {
             No account needed to buy — <Link href={next === "/checkout" ? "/checkout" : "/shop"} className="link font-medium">continue as a guest</Link>.
           </p>
         </div>
-        <p className="mt-4 text-center text-xs text-ink-muted">We only use your Google name, email and profile photo to create your Conzoomer account.</p>
+        <p className="mt-4 text-center text-xs text-ink-muted">With Google, we only use your name, email and profile photo to create your Conzoomer account.</p>
       </div>
     </div>
   );

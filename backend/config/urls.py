@@ -3,6 +3,7 @@ from django.urls import include, path
 
 from cart import views as cart_views
 from catalog import views as catalog_views
+from core import accounts as account_views
 from core import views as core_views
 from orders import views as order_views
 
@@ -15,6 +16,15 @@ api = [
     path("session/", core_views.SessionView.as_view()),
     path("auth/logout/", core_views.LogoutView.as_view()),
     path("auth/dev-login/", core_views.DevLoginView.as_view()),
+    path("auth/register/", account_views.WebRegisterView.as_view()),
+    path("auth/login/", account_views.WebLoginView.as_view()),
+    # Mobile app (token auth)
+    path("mobile/auth/register/", account_views.MobileRegisterView.as_view()),
+    path("mobile/auth/login/", account_views.MobileLoginView.as_view()),
+    path("mobile/auth/logout/", account_views.MobileLogoutView.as_view()),
+    path("mobile/google/start/", account_views.mobile_google_start),
+    path("mobile/google/finish/", account_views.mobile_google_finish),
+    path("mobile/google/exchange/", account_views.MobileGoogleExchangeView.as_view()),
     path("categories/", catalog_views.CategoryListView.as_view()),
     path("products/", catalog_views.ProductListView.as_view()),
     path("products/<slug:slug>/", catalog_views.ProductDetailView.as_view()),
