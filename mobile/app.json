@@ -47,7 +47,12 @@
     },
     "extra": {
       "apiUrl": "https://conzoomer.onrender.com",
-      "webUrl": "https://conzoomer-shop.onrender.com"
-    }
+      "webUrl": "https://conzoomer-shop.onrender.com",
+      "router": {},
+      "eas": {
+        "projectId": "40dce706-9b96-4102-8f95-6ee509f880cf"
+      }
+    },
+    "owner": "conzoomer-lukmans-team"
   }
 }
