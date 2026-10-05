@@ -25,23 +25,32 @@ type Options = { method?: string; body?: unknown; headers?: Record<string, strin
 
 /** JSON request to the Conzoomer API with the signed-in user's token. */
 export async function api<T>(path: string, { method = "GET", body, headers = {}, auth = true }: Options = {}): Promise<T> {
+  // The free server sleeps when idle and answers 502/503 while waking up
+  // (up to about a minute). Read-only requests wait for it.
+  const deadline = Date.now() + (method === "GET" ? 75_000 : 0);
   let res: Response;
-  try {
-    res = await fetch(`${API_URL}${path}`, {
-      method,
-      headers: {
-        Accept: "application/json",
-        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
-        ...(auth && authToken ? { Authorization: `Token ${authToken}` } : {}),
-        ...headers,
-      },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
-  } catch {
-    throw new ApiError(0, {
-      code: "network_error",
-      message: "Can't reach Conzoomer. Check your connection and try again.",
-    });
+  for (;;) {
+    try {
+      res = await fetch(`${API_URL}${path}`, {
+        method,
+        headers: {
+          Accept: "application/json",
+          ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+          ...(auth && authToken ? { Authorization: `Token ${authToken}` } : {}),
+          ...headers,
+        },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+      });
+      if (![502, 503, 504].includes(res.status) || Date.now() > deadline) break;
+    } catch {
+      if (Date.now() > deadline) {
+        throw new ApiError(0, {
+          code: "network_error",
+          message: "Can't reach Conzoomer. Check your connection and try again.",
+        });
+      }
+    }
+    await new Promise((r) => setTimeout(r, 3000));
   }
 
   const text = await res.text();

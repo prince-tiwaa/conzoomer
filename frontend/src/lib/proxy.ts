@@ -37,21 +37,25 @@ export async function proxy(req: NextRequest): Promise<Response> {
   headers.set("x-forwarded-proto", publicProto.split(",")[0].trim());
 
   const hasBody = !["GET", "HEAD"].includes(req.method);
-  let upstream: Response;
-  try {
-    upstream = await fetch(target, {
-      method: req.method,
-      headers,
-      body: hasBody ? await req.arrayBuffer() : undefined,
-      redirect: "manual",
-      cache: "no-store",
-    });
-  } catch (error) {
-    console.error("[conzoomer] backend unreachable:", target, error);
-    return Response.json(
-      { error: { code: "backend_unavailable", message: "The store is waking up or temporarily unavailable. Please try again in a moment." } },
-      { status: 502 },
-    );
+  const body = hasBody ? await req.arrayBuffer() : undefined;
+  // Free hosting sleeps the API when idle and answers 502/503 while it wakes.
+  // Safe (read-only) requests wait for it, for up to a minute.
+  const deadline = Date.now() + (hasBody ? 0 : 60_000);
+  let upstream: Response | null = null;
+  for (;;) {
+    try {
+      upstream = await fetch(target, { method: req.method, headers, body, redirect: "manual", cache: "no-store" });
+      if (![502, 503, 504].includes(upstream.status) || Date.now() > deadline) break;
+    } catch (error) {
+      if (Date.now() > deadline) {
+        console.error("[conzoomer] backend unreachable:", target, error);
+        return Response.json(
+          { error: { code: "backend_unavailable", message: "The store is waking up or temporarily unavailable. Please try again in a moment." } },
+          { status: 502 },
+        );
+      }
+    }
+    await new Promise((r) => setTimeout(r, 3000));
   }
 
   const out = new Headers();
